@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Credits & How to Play</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0f0f0f, #1c1c1c);
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      color: #00ffcc;
+    }
+
+    p {
+      font-size: 16px;
+      color: #ccc;
+    }
+
+    .card {
+      background: #222;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,255,200,0.2);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn {
+      margin-top: 30px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      background: #00ffcc;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #00ccaa;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🎮 Snake Game</h1>
+  <p>Classic multiplayer snake experience built using JavaScript & Socket.io</p>
+
+  <!-- CREDITS -->
+  <div class="card">
+    <h2>👨‍💻 Credits</h2>
+    <p>Created by <strong>Jayesh Gujar</strong></p>
+    <p>Frontend: HTML, CSS, JavaScript</p>
+    <p>Backend: Node.js + Socket.io</p>
+  </div>
+
+  <!-- HOW TO PLAY -->
+  <div class="card">
+    <h2>🎯 How to Play</h2>
+    <p>Control your snake, eat food, and survive longer than others!</p>
+
+    <div class="controls">
+      <p>⬆️ Arrow Up → Move Up</p>
+      <p>⬇️ Arrow Down → Move Down</p>
+      <p>⬅️ Arrow Left → Move Left</p>
+      <p>➡️ Arrow Right → Move Right</p>
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div class="card">
+    <h2>⚠️ Game Rules</h2>
+    <p>🍎 Eat food to grow your snake</p>
+    <p>💥 Avoid hitting walls</p>
+    <p>☠️ Avoid hitting yourself or other players</p>
+    <p>🏆 Last player alive wins</p>
+  </div>
+
+  <!-- BUTTON -->
+  <button class="btn" onclick="goBack()">⬅ Back to Menu</button>
+
+</div>
+
+<script>
+function goBack() {
+  window.location.href = "../index.html";
+}
+</script>
+
+</body>
+</html>
