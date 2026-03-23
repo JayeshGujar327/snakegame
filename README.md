@@ -1,4 +1,3 @@
-echo "# 🐍 Snake Game Multiplayer" >> README.md
-git add .
-git commit -m "Added README"
-git push
+### snakegame  
+*A classic arcade game brought to life with clean front-end logic.*  
+🔹 *Tech:* JavaScript, HTML Canvas, DOM Manipulation
