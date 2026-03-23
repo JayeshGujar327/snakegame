@@ -37,11 +37,11 @@ body::before {
   100% { transform: translate(-25%, -25%); }
 }
 
-/* 🎮 Glass Card */
+/* 🎮 CENTER FIX (IMPORTANT FIX) */
 .container {
   position: relative;
   z-index: 1;
-  width: 350px;
+  width: 380px;
   padding: 40px;
   border-radius: 20px;
   background: rgba(255,255,255,0.05);
@@ -51,6 +51,7 @@ body::before {
   animation: fadeIn 1s ease;
 }
 
+/* TITLE */
 h1 {
   font-size: 48px;
   color: white;
@@ -63,7 +64,7 @@ h1 {
   margin-bottom: 25px;
 }
 
-/* 🎯 Buttons */
+/* 🎯 BUTTONS */
 .btn {
   width: 100%;
   padding: 14px;
@@ -90,7 +91,7 @@ h1 {
   transform: scale(0.95);
 }
 
-/* Ripple effect */
+/* Ripple */
 .btn::after {
   content: "";
   position: absolute;
@@ -116,11 +117,35 @@ footer {
   color: #777;
 }
 
-/* Fade animation */
+/* Fade */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px);}
   to { opacity: 1; transform: translateY(0);}
 }
+
+/* 🔥 GITHUB WATERMARK (FIXED POSITION + CLEAN UI) */
+#github-watermark {
+  position: fixed;
+  bottom: 12px;
+  right: 20px;
+  font-size: 13px;
+  color: rgba(0,255,200,0.35);
+  text-decoration: none;
+  z-index: 0;
+  animation: blink 3s infinite;
+}
+
+#github-watermark:hover {
+  color: #00ffcc;
+}
+
+/* subtle animation */
+@keyframes blink {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.2; }
+}
+
 </style>
 </head>
 
@@ -145,6 +170,11 @@ function go(page) {
   }, 300);
 }
 </script>
+
+<!-- ✅ CLEAN BACKGROUND WATERMARK -->
+<a href="https://github.com/JayeshGujar327" target="_blank" id="github-watermark">
+  github.com/JayeshGujar327
+</a>
 
 </body>
 </html>

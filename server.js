@@ -1,118 +1,146 @@
-// ✅ IMPORTS
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 
-// ✅ SETUP
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.static(__dirname));
 
-// ✅ GAME DATA
 let players = {};
-let food = { x: 200, y: 200 };
+let food = randomFood();
+let gameStarted = false;
 
-// 🧠 COLLISION FUNCTION
-function isCollision(head, snake) {
-  return snake.some(part => part.x === head.x && part.y === head.y);
+// 🍎 FOOD
+function randomFood() {
+  return {
+    x: Math.floor(Math.random() * 40) * 10,
+    y: Math.floor(Math.random() * 40) * 10
+  };
 }
 
-// ✅ SOCKET CONNECTION
+// 🧠 COLLISION CHECK
+function isCollision(head, snake) {
+  return snake.some(p => p.x === head.x && p.y === head.y);
+}
+
+// ✅ CONNECTION
 io.on("connection", (socket) => {
-  console.log("Player connected:", socket.id);
+  console.log("Player:", socket.id);
 
   players[socket.id] = {
     id: socket.id,
-    snake: [{ x: 100, y: 100 }],
+    snake: [{ x: Math.floor(Math.random()*300), y: Math.floor(Math.random()*300) }],
     direction: "RIGHT",
     color: "#" + Math.floor(Math.random()*16777215).toString(16),
-    score: 0
+    score: 0,
+    alive: true
   };
 
-  socket.emit("init", { players, food });
+  io.emit("state", { players, food });
 
   socket.on("move", (dir) => {
-    if (players[socket.id]) {
-      players[socket.id].direction = dir;
-    }
+    let p = players[socket.id];
+    if (!p || !p.alive) return;
+
+    if (dir === "UP" && p.direction !== "DOWN") p.direction = dir;
+    if (dir === "DOWN" && p.direction !== "UP") p.direction = dir;
+    if (dir === "LEFT" && p.direction !== "RIGHT") p.direction = dir;
+    if (dir === "RIGHT" && p.direction !== "LEFT") p.direction = dir;
   });
 
   socket.on("disconnect", () => {
-    console.log("Player disconnected:", socket.id);
     delete players[socket.id];
   });
 });
 
-// 🔁 GAME LOOP (FINAL)
+/* 🎮 GAME LOOP */
 setInterval(() => {
+  let ids = Object.keys(players);
 
-  for (let id in players) {
+  if (ids.length < 2) {
+    gameStarted = false;
+    io.emit("state", { players, food });
+    return;
+  }
+
+  gameStarted = true;
+
+  for (let id of ids) {
     let p = players[id];
+    if (!p || !p.alive) continue;
+
     let head = { ...p.snake[0] };
 
-    // 🎮 movement
+    // movement
     if (p.direction === "RIGHT") head.x += 10;
     if (p.direction === "LEFT") head.x -= 10;
     if (p.direction === "UP") head.y -= 10;
     if (p.direction === "DOWN") head.y += 10;
 
-    // 🌍 wall wrap
-    if (head.x > 400) head.x = 0;
-    if (head.x < 0) head.x = 400;
-    if (head.y > 400) head.y = 0;
-    if (head.y < 0) head.y = 400;
+    // wrap
+    if (head.x >= 400) head.x = 0;
+    if (head.x < 0) head.x = 390;
+    if (head.y >= 400) head.y = 0;
+    if (head.y < 0) head.y = 390;
 
-    // 💥 SELF COLLISION
+    // ❌ SELF COLLISION
     if (isCollision(head, p.snake)) {
-      delete players[id];
+      p.alive = false;
+      io.emit("message", `💥 Player ${id.slice(0,4)} hit itself!`);
       continue;
     }
 
-    // 💥 COLLISION WITH OTHER PLAYERS
-    let died = false;
+    // ❌ COLLISION WITH OTHER PLAYERS
     for (let otherId in players) {
       if (otherId !== id) {
         if (isCollision(head, players[otherId].snake)) {
-          delete players[id];
-          died = true;
-          break;
+          p.alive = false;
+          io.emit("message", `⚔️ Player ${id.slice(0,4)} crashed into ${otherId.slice(0,4)}!`);
         }
       }
     }
 
-    if (died || !players[id]) continue;
+    if (!p.alive) continue;
 
-    // 🐍 move snake
     p.snake.unshift(head);
 
     // 🍎 FOOD
     if (head.x === food.x && head.y === food.y) {
       p.score++;
-      food = {
-        x: Math.floor(Math.random()*40)*10,
-        y: Math.floor(Math.random()*40)*10
-      };
+      food = randomFood();
     } else {
       p.snake.pop();
     }
   }
 
-  // 🏆 WINNER SYSTEM
-  const ids = Object.keys(players);
+  let alivePlayers = Object.values(players).filter(p => p.alive);
 
-  if (ids.length === 1 && ids.length !== 0) {
-    io.emit("winner", players[ids[0]]);
-    players = {}; // reset game
+  // 🏆 WINNER
+  if (gameStarted && alivePlayers.length === 1) {
+    const winner = alivePlayers[0];
+
+    io.emit("winner", {
+      id: winner.id,
+      score: winner.score,
+      color: winner.color
+    });
+
+    // reset after delay
+    setTimeout(() => {
+      players = {};
+      food = randomFood();
+      gameStarted = false;
+    }, 3000);
+
+    return;
   }
 
-  // 🔄 SEND STATE
   io.emit("state", { players, food });
 
 }, 120);
 
-// ✅ START SERVER
 server.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+  console.log("Server running http://localhost:3000");
 });

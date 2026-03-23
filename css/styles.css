@@ -78,18 +78,15 @@ body {
 #github-watermark {
   position: fixed;
   bottom: 10px;
-  left: 10px; /* background corner */
-  font-size: 12px;
-  color: rgba(0, 255, 200, 0.15); /* very light = background feel */
+  right: 20px;
+  font-size: 13px;
+  color: rgba(0,255,200,0.3);
   text-decoration: none;
-  pointer-events: auto;
-  z-index: 0; /* stays behind UI */
-  animation: subtleBlink 3s infinite;
+  animation: blink 3s infinite;
 }
 
-/* subtle animation */
-@keyframes subtleBlink {
-  0% { opacity: 0.1; }
-  50% { opacity: 0.4; }
-  100% { opacity: 0.1; }
+@keyframes blink {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.2; }
 }
